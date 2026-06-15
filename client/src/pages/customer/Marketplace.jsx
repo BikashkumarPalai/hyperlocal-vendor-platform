@@ -1021,10 +1021,11 @@ import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import Hero from '../../assets/Hero.jpeg'
 import {
   BadgeCheck, ShieldCheck,
-  ShoppingCart, UtensilsCrossed, Apple, Croissant, Milk, PenLine, Package,
-  MapPin, Search, LogOut, ClipboardList, ChevronRight, ShoppingBag, Star, ChevronLeft, X
+  ShoppingCart, UtensilsCrossed, Apple, Croissant, Milk, PenLine, LayoutGrid, Package,
+  MapPin, Search, LogOut, ClipboardList, ChevronRight, ShoppingBag, Star, ChevronLeft
 } from 'lucide-react'
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
 import { createPortal } from 'react-dom'
@@ -1049,7 +1050,29 @@ const userIcon = new L.Icon({
 })
 
 const catColor = { grocery: '#16a34a', food: '#ea580c', fruit: '#dc2626', bakery: '#d97706', dairy: '#2563eb', stationary: '#7c3aed', other: '#64748b' }
-const catBg =   { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
+const catBg = { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
+
+// Category images from Unsplash (free, no auth needed)
+const CAT_IMAGES = {
+  grocery: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&q=80',
+  food: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80',
+  fruit: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=300&q=80',
+  bakery: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80',
+  dairy: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&q=80',
+  stationary: 'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=300&q=80',
+  other: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&q=80',
+}
+
+const CATEGORIES = [
+  { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={20} /> },
+  { id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: <ShoppingCart size={20} /> },
+  { id: 'food', label: 'Food', color: '#ea580c', bg: '#fff7ed', icon: <UtensilsCrossed size={20} /> },
+  { id: 'fruit', label: 'Fruits', color: '#dc2626', bg: '#fef2f2', icon: <Apple size={20} /> },
+  { id: 'bakery', label: 'Bakery', color: '#d97706', bg: '#fffbeb', icon: <Croissant size={20} /> },
+  { id: 'dairy', label: 'Dairy', color: '#2563eb', bg: '#eff6ff', icon: <Milk size={20} /> },
+  { id: 'stationary', label: 'Stationery', color: '#7c3aed', bg: '#f5f3ff', icon: <PenLine size={20} /> },
+  { id: 'other', label: 'Other', color: '#64748b', bg: '#f8fafc', icon: <Package size={20} /> },
+]
 
 // ─── Product Card (used for Trending + Top Rated) ──────────────────────────
 const ProductCard = ({ product, onClick }) => {
@@ -1106,7 +1129,7 @@ const HScrollSection = ({ title, subtitle, items, renderItem, loading }) => {
       </div>
       <div className="hscroll-track" ref={ref}>
         {loading
-          ? [1,2,3,4,5].map(i => <div key={i} className="skeleton pcard-skeleton" />)
+          ? [1, 2, 3, 4, 5].map(i => <div key={i} className="skeleton pcard-skeleton" />)
           : items.map((item, i) => <div key={item._id || i} className="hscroll-item">{renderItem(item)}</div>)
         }
       </div>
@@ -1213,12 +1236,10 @@ export default function Marketplace() {
   const [shops, setShops] = useState([])
   const [trendingProducts, setTrendingProducts] = useState([])
   const [topRatedProducts, setTopRatedProducts] = useState([])
-  const [searchResults, setSearchResults] = useState([])
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
   const [loading, setLoading] = useState(true)
   const [productsLoading, setProductsLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('')
   const [userLocation, setUserLocation] = useState(null)
   const [scrolled, setScrolled] = useState(false)
   const [mapExpanded, setMapExpanded] = useState(false)
@@ -1237,44 +1258,6 @@ export default function Marketplace() {
     document.body.style.overflow = mapExpanded ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mapExpanded])
-
-  // Debounced product search
-  useEffect(() => {
-    const q = search.trim()
-    if (!q) {
-      setSearchResults([])
-      setHasSearched(false)
-      return
-    }
-    const timer = setTimeout(() => runSearch(q), 400)
-    return () => clearTimeout(timer)
-  }, [search])
-
-  const runSearch = async (q) => {
-    try {
-      setSearchLoading(true)
-      setHasSearched(true)
-      const res = await axios.get('/api/product/search', { params: { q } })
-      setSearchResults(res.data.products || [])
-    } catch (err) {
-      console.error(err)
-      setSearchResults([])
-    } finally {
-      setSearchLoading(false)
-    }
-  }
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault()
-    const q = search.trim()
-    if (q) runSearch(q)
-  }
-
-  const clearSearch = () => {
-    setSearch('')
-    setSearchResults([])
-    setHasSearched(false)
-  }
 
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -1319,7 +1302,8 @@ export default function Marketplace() {
   const filteredShops = shops.filter(shop => {
     const matchSearch = shop.name.toLowerCase().includes(search.toLowerCase()) ||
       (shop.location?.address || '').toLowerCase().includes(search.toLowerCase())
-    return matchSearch
+    const matchCat = category === '' || shop.category === category
+    return matchSearch && matchCat
   })
 
   const openShops = filteredShops.filter(s => s.isOpen).length
@@ -1336,15 +1320,11 @@ export default function Marketplace() {
         .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 20px; }
         .logo { font-size: 22px; font-weight: 900; color: #0f172a; letter-spacing: -0.8px; flex-shrink: 0; cursor: pointer; }
         .logo em { color: #22c55e; font-style: normal; }
-        .search-wrap { flex: 1; max-width: 520px; position: relative; display: flex; align-items: center; }
-        .search-bar { width: 100%; height: 46px; padding: 0 84px 0 48px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; transition: all 0.2s; }
+        .search-wrap { flex: 1; max-width: 520px; position: relative; }
+        .search-bar { width: 100%; height: 46px; padding: 0 18px 0 48px; border-radius: 14px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; font-family: 'Inter', sans-serif; color: #0f172a; outline: none; transition: all 0.2s; }
         .search-bar:focus { border-color: #22c55e; background: #fff; box-shadow: 0 0 0 4px rgba(34,197,94,0.1); }
         .search-bar::placeholder { color: #94a3b8; }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
-        .search-clear { position: absolute; right: 46px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 8px; border: none; background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; }
-        .search-clear:hover { background: #e2e8f0; color: #374151; }
-        .search-submit { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 9px; border: none; background: #22c55e; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; }
-        .search-submit:hover { background: #16a34a; }
         .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
         .nav-btn { display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }
         .btn-orders { background: #f0fdf4; color: #16a34a; }
@@ -1357,19 +1337,21 @@ export default function Marketplace() {
 
         /* ── Hero ── */
         .hero { background: linear-gradient(135deg, #f0fdf4 0%, #fafffe 40%, #fffbeb 100%); padding: 64px 0 56px; border-bottom: 1px solid #f1f5f9; }
-        .hero-inner { max-width: 760px; margin: 0 auto; padding: 0 24px; text-align: center; }
+        .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 55% 45%; gap: 48px; align-items: center; }
         .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
         .hero-title { font-size: 52px; font-weight: 900; color: #0f172a; line-height: 1.06; letter-spacing: -2.5px; margin-bottom: 18px; }
         .hero-title em { color: #22c55e; font-style: normal; }
-        .hero-sub { font-size: 16px; color: #64748b; line-height: 1.65; margin: 0 auto 32px; font-weight: 400; max-width: 480px; }
-        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; justify-content: center; }
+        .hero-sub { font-size: 16px; color: #64748b; line-height: 1.65; margin-bottom: 32px; font-weight: 400; max-width: 440px; }
+        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
         .hero-btn-primary { padding: 14px 28px; background: #22c55e; color: #fff; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
         .hero-btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
         .hero-btn-secondary { padding: 14px 28px; background: #fff; color: #374151; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
         .hero-btn-secondary:hover { border-color: #22c55e; color: #22c55e; }
-        .trust-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .trust-row { display: flex; gap: 20px; flex-wrap: wrap; }
         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
         .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
+        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 420px; }
+        .hero-right img { width: 100%; max-width: 600px; height: auto; object-fit: contain; filter: drop-shadow(0 20px 48px rgba(34,197,94,0.14)); mix-blend-mode: multiply; }
 
         /* ── Main ── */
         .main { max-width: 1200px; margin: 0 auto; padding: 56px 24px 0; }
@@ -1400,9 +1382,20 @@ export default function Marketplace() {
         .pcard-unit { font-size: 12px; font-weight: 500; color: #94a3b8; }
         .pcard-skeleton { width: 220px; height: 270px; }
 
-        /* ── Search Results ── */
-        .search-results-section { margin-bottom: 56px; }
-        .search-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+        /* ── Category Cards ── */
+        .cat-section { margin-bottom: 56px; }
+        .cat-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; margin-top: 20px; }
+        .cat-card { display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: 20px; border: 2px solid transparent; cursor: pointer; transition: all 0.22s; background: #fff; overflow: hidden; }
+        .cat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); }
+        .cat-card.active { border-color: currentColor; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .cat-img-wrap { width: 100%; height: 80px; overflow: hidden; }
+        .cat-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .cat-card:hover .cat-img { transform: scale(1.08); }
+        .cat-label-wrap { padding: 10px 8px; text-align: center; width: 100%; }
+        .cat-label { font-size: 12px; font-weight: 700; color: #374151; }
+        .cat-card.active .cat-label { font-weight: 800; }
+        /* All category uses icon not image */
+        .cat-icon-only { width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
 
         /* ── Shop Cards ── */
         .shops-section { margin-bottom: 56px; }
@@ -1463,10 +1456,14 @@ export default function Marketplace() {
         .cart-count { background: #fff; color: #16a34a; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
 
         @media (max-width: 900px) {
+          .hero-inner { grid-template-columns: 1fr; }
+          .hero-right { display: none; }
           .hero-title { font-size: 36px; }
+          .cat-grid { grid-template-columns: repeat(4, 1fr); }
           .map-header { flex-direction: column; align-items: flex-start; gap: 14px; }
         }
         @media (max-width: 600px) {
+          .cat-grid { grid-template-columns: repeat(4, 1fr); }
           .nav-actions .user-chip { display: none; }
         }
       `}</style>
@@ -1475,20 +1472,12 @@ export default function Marketplace() {
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="nav-inner">
           <div className="logo">Hyper<em>local</em></div>
-          <form className="search-wrap" onSubmit={handleSearchSubmit}>
+          <div className="search-wrap">
             <span className="search-icon"><Search size={18} /></span>
             <input className="search-bar" type="text"
-              placeholder="Search for products..."
+              placeholder="Search shops, groceries, bakery..."
               value={search} onChange={e => setSearch(e.target.value)} />
-            {search && (
-              <button type="button" className="search-clear" onClick={clearSearch} aria-label="Clear search">
-                <X size={16} />
-              </button>
-            )}
-            <button type="submit" className="search-submit" aria-label="Search">
-              <Search size={16} />
-            </button>
-          </form>
+          </div>
           <div className="nav-actions">
             <button className="nav-btn btn-orders" onClick={() => navigate('/customer/orders')}>
               <ClipboardList size={15} /> My Orders
@@ -1531,8 +1520,8 @@ export default function Marketplace() {
             <div className="trust-row">
               {[
                 { Icon: BadgeCheck, text: 'Verified Vendors', color: '#16a34a' },
-                { Icon: MapPin,     text: 'Nearby Shops',    color: '#ea580c' },
-                { Icon: ShieldCheck,text: 'Secure Payments', color: '#2563eb' },
+                { Icon: MapPin, text: 'Nearby Shops', color: '#ea580c' },
+                { Icon: ShieldCheck, text: 'Secure Payments', color: '#2563eb' },
               ].map(({ Icon, text, color }, i) => (
                 <div key={i} className="trust-badge">
                   <div className="trust-icon-circle"><Icon size={16} color={color} strokeWidth={2} /></div>
@@ -1541,56 +1530,15 @@ export default function Marketplace() {
               ))}
             </div>
           </div>
+          <div className="hero-right">
+            <img src={Hero} alt="Local marketplace" />
+          </div>
         </div>
       </section>
 
       {/* ── Main content ── */}
       <div className="main">
 
-        {/* ── Search Results ── */}
-        {hasSearched ? (
-          <div className="search-results-section">
-            <div className="shops-header">
-              <div>
-                <div className="section-title">
-                  <Search size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />
-                  Results for "{search.trim()}"
-                </div>
-                {!searchLoading && (
-                  <div className="section-sub">
-                    {searchResults.length} product{searchResults.length !== 1 ? 's' : ''} found
-                  </div>
-                )}
-              </div>
-              <button className="see-all" onClick={clearSearch}>
-                Clear search <X size={14} />
-              </button>
-            </div>
-
-            {searchLoading ? (
-              <div className="shops-grid">
-                {[1,2,3,4,5,6].map(i => <div key={i} className="skeleton" style={{ height: 280 }} />)}
-              </div>
-            ) : searchResults.length === 0 ? (
-              <div className="empty">
-                <Search size={48} color="#cbd5e1" strokeWidth={1.5} />
-                <p className="empty-title">No products found</p>
-                <p className="empty-sub">Try a different search term</p>
-              </div>
-            ) : (
-              <div className="search-results-grid">
-                {searchResults.map(product => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    onClick={() => navigate(`/product/${product._id}`)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-        <>
         {/* ── Section 1: Trending Near You ── */}
         <div id="trending-section">
           <HScrollSection
@@ -1601,12 +1549,11 @@ export default function Marketplace() {
             renderItem={product => (
               <ProductCard
                 product={product}
-                onClick={() => navigate(`/product/${product._id}`)}
+                onClick={() => navigate(`/shop/${product.shop?._id}`)}
               />
             )}
           />
         </div>
-
 
         {/* ── Section 2: Top Rated ── */}
         {(topRatedProducts.length > 0 || productsLoading) && (
@@ -1618,17 +1565,54 @@ export default function Marketplace() {
             renderItem={product => (
               <ProductCard
                 product={product}
-                onClick={() => navigate(`/product/${product._id}`)}
+                onClick={() => navigate(`/shop/${product.shop?._id}`)}
               />
             )}
           />
         )}
 
-        {/* ── Explore Nearby Shops ── */}
+        {/* ── Section 3: Categories ── */}
+        <div className="cat-section">
+          <div className="section-title">Shop by Category</div>
+          <div className="section-sub">What are you looking for today?</div>
+          <div className="cat-grid">
+            {CATEGORIES.map(cat => (
+              <div
+                key={cat.id}
+                className={`cat-card${category === cat.id ? ' active' : ''}`}
+                style={{ color: cat.color, borderColor: category === cat.id ? cat.color : 'transparent' }}
+                onClick={() => setCategory(cat.id)}
+              >
+                {cat.id === ''
+                  ? (
+                    <div className="cat-icon-only" style={{ background: category === '' ? cat.color : cat.bg }}>
+                      {/* clone icon with correct color */}
+                      <LayoutGrid size={28} color={category === '' ? '#fff' : cat.color} />
+                    </div>
+                  )
+                  : (
+                    <div className="cat-img-wrap">
+                      <img src={CAT_IMAGES[cat.id]} alt={cat.label} className="cat-img" />
+                    </div>
+                  )
+                }
+                <div className="cat-label-wrap">
+                  <span className="cat-label" style={{ color: category === cat.id ? cat.color : '#374151' }}>
+                    {cat.label}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Section 4: Explore Nearby Shops ── */}
         <div className="shops-section" id="shops-section">
           <div className="shops-header">
             <div>
-              <div className="section-title">🏪 Explore Nearby Shops</div>
+              <div className="section-title">
+                🏪 {category ? `${CATEGORIES.find(c => c.id === category)?.label} Shops` : 'Explore Nearby Shops'}
+              </div>
               <div className="section-sub">Trusted local stores around you</div>
               {!loading && (
                 <div className="results-pills">
@@ -1637,11 +1621,16 @@ export default function Marketplace() {
                 </div>
               )}
             </div>
+            {category && (
+              <button className="see-all" onClick={() => setCategory('')}>
+                View all <ChevronRight size={14} />
+              </button>
+            )}
           </div>
 
           {loading ? (
             <div className="shops-grid">
-              {[1,2,3,4,5,6].map(i => (
+              {[1, 2, 3, 4, 5, 6].map(i => (
                 <div key={i} className="skeleton" style={{ height: 280 }} />
               ))}
             </div>
@@ -1649,7 +1638,7 @@ export default function Marketplace() {
             <div className="empty">
               <Search size={48} color="#cbd5e1" strokeWidth={1.5} />
               <p className="empty-title">No shops found</p>
-              <p className="empty-sub">Try a different search term</p>
+              <p className="empty-sub">Try a different category or clear your search</p>
             </div>
           ) : (
             <div className="shops-grid">
@@ -1666,11 +1655,11 @@ export default function Marketplace() {
                         : (
                           <div className="shop-img-fallback" style={{ background: `linear-gradient(135deg, ${bg}, #fff)` }}>
                             {/* big category icon as fallback */}
-                            {shop.category === 'grocery'    && <ShoppingCart size={48} color={color} strokeWidth={1.2} />}
-                            {shop.category === 'food'       && <UtensilsCrossed size={48} color={color} strokeWidth={1.2} />}
-                            {shop.category === 'fruit'      && <Apple size={48} color={color} strokeWidth={1.2} />}
-                            {shop.category === 'bakery'     && <Croissant size={48} color={color} strokeWidth={1.2} />}
-                            {shop.category === 'dairy'      && <Milk size={48} color={color} strokeWidth={1.2} />}
+                            {shop.category === 'grocery' && <ShoppingCart size={48} color={color} strokeWidth={1.2} />}
+                            {shop.category === 'food' && <UtensilsCrossed size={48} color={color} strokeWidth={1.2} />}
+                            {shop.category === 'fruit' && <Apple size={48} color={color} strokeWidth={1.2} />}
+                            {shop.category === 'bakery' && <Croissant size={48} color={color} strokeWidth={1.2} />}
+                            {shop.category === 'dairy' && <Milk size={48} color={color} strokeWidth={1.2} />}
                             {shop.category === 'stationary' && <PenLine size={48} color={color} strokeWidth={1.2} />}
                             {(!shop.category || shop.category === 'other') && <Package size={48} color={color} strokeWidth={1.2} />}
                           </div>
@@ -1711,8 +1700,6 @@ export default function Marketplace() {
             </div>
           )}
         </div>
-        </>
-        )}
       </div>
 
       {/* ── Map Section ── */}
