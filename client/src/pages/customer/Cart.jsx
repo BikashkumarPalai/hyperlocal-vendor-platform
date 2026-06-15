@@ -142,13 +142,7 @@ const Cart = () => {
         </button>
 
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Cart</h2>
-
-        {error && (
-          <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
-
+        
         {/* Cart Items */}
         <div className="bg-white rounded-lg shadow mb-4">
           <div className="divide-y">
