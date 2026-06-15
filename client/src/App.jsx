@@ -12,7 +12,7 @@ import MyOrders from './pages/customer/MyOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import Cart from './pages/customer/Cart';
 import UpdateShop from './pages/vendor/UpdateShop';
-import ProductDetail from './pages/customer/ProductDetail'
+import ProductDetail from './pages/customer/Productdetail'
 
 function App() {
   return (
