@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -30,6 +31,7 @@ const VendorDashboard = () => {
       setAnalytics(analyticsRes.data)
     } catch (err) {
       console.error(err)
+      toast.error('Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
@@ -37,6 +39,7 @@ const VendorDashboard = () => {
 
   const handleLogout = () => {
     logout()
+    toast.success('Logged out successfully')
     navigate('/login')
   }
 

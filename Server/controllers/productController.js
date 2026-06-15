@@ -110,6 +110,21 @@ const getProductsByShop = async (req, res) => {
     }
 }
 
+// Get single product by id (public)
+const getProductById = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+            .populate('shop', 'name category location isOpen contact')
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' })
+        }
+
+        res.json({ product })
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message })
+    }
+}
 
 // For the showing the product 
 const getPopularProducts = async (req, res) => {
@@ -156,5 +171,53 @@ const getPopularProducts = async (req, res) => {
     }
 }
 
-module.exports = { addProduct, getMyProducts, updateProduct, deleteProduct, getProductsByShop, getPopularProducts }
+// Get top-rated products sorted by averageRating
+const getTopRatedProducts = async (req, res) => {
+    try {
+        const limit = Math.min(20, parseInt(req.query.limit) || 10)
+
+        const products = await Product.find({
+            isAvailable: true,
+            stock: { $gt: 0 },
+            totalRatings: { $gt: 0 }   // only products that have at least one review
+        })
+            .populate('shop', 'name category location isOpen')
+            .sort({ averageRating: -1, totalRatings: -1 })
+            .limit(limit)
+
+        res.json({ products })
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message })
+    }
+}
+
+
+// Search products by name (public)
+const searchProducts = async (req, res) => {
+    try {
+        const { q } = req.query
+
+        if (!q || q.trim().length === 0) {
+            return res.status(400).json({ message: 'Search query is required' })
+        }
+
+        const limit = Math.min(20, parseInt(req.query.limit) || 10)
+
+        // Case-insensitive partial match on product name
+        const products = await Product.find({
+            name: { $regex: q.trim(), $options: 'i' },    // $Option: 'i' for case-insensitive
+            isAvailable: true,
+            stock: { $gt: 0 }
+        })
+            .populate('shop', 'name category location isOpen')
+            .sort({ averageRating: -1 })
+            .limit(limit)
+
+        res.json({ products, count: products.length })
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message })
+    }
+}
+
+module.exports = { addProduct, getMyProducts, updateProduct, deleteProduct, getProductsByShop, getPopularProducts, searchProducts, getTopRatedProducts, getProductById }
 

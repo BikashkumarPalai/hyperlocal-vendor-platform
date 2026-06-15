@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
@@ -32,6 +33,7 @@ const ShopDetail = () => {
       setProducts(productRes.data.products)
     } catch (err) {
       console.error(err)
+      toast.error('Failed to load shop data')
     } finally {
       setLoading(false)
     }
@@ -59,6 +61,7 @@ const ShopDetail = () => {
     if (currentQty >= product.stock) return
 
     addToCart(product, id)
+    toast.success(`${product.name} added to cart`)
 
     setAdded(prev => ({ ...prev, [product._id]: true }))
 
@@ -68,6 +71,7 @@ const ShopDetail = () => {
   }
 
   const handleLogout = () => {
+    toast.success('Logged out successfully')
     logout()
     navigate('/login')
   }
@@ -157,7 +161,10 @@ const ShopDetail = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {products.map(product => (
               <div key={product._id} className="bg-white rounded-lg shadow p-4 flex justify-between items-center">
-                <div>
+                <div
+                  onClick={() => navigate(`/product/${product._id}`)}
+                  className="cursor-pointer hover:underline"
+                >
                   <h4 className="font-medium text-gray-800">{product.name}</h4>
                   <p className="text-sm text-gray-500">
                     ₹{product.price}/{product.unit}
@@ -183,8 +190,8 @@ const ShopDetail = () => {
                       onClick={() => handleAddToCart(product)}
                       disabled={getCartQty(product._id) >= product.stock}
                       className={`px-3 py-1 rounded ${getCartQty(product._id) >= product.stock
-                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                          : 'bg-blue-600 text-white'
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-blue-600 text-white'
                         }`}
                     >
                       +
@@ -195,8 +202,8 @@ const ShopDetail = () => {
                     onClick={() => handleAddToCart(product)}
                     disabled={product.stock === 0}
                     className={`px-4 py-2 rounded text-sm font-medium ${product.stock === 0
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 text-white'
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 text-white'
                       }`}
                   >
                     {product.stock === 0 ? 'Out of Stock' : 'Add'}

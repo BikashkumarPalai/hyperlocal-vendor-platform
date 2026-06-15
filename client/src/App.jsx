@@ -12,6 +12,7 @@ import MyOrders from './pages/customer/MyOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import Cart from './pages/customer/Cart';
 import UpdateShop from './pages/vendor/UpdateShop';
+import ProductDetail from './pages/customer/ProductDetail'
 
 function App() {
   return (
@@ -46,6 +47,12 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/product/:id" element={
+            <ProtectedRoute role="customer">
+              <ProductDetail />
+            </ProtectedRoute>
+          } />
+
           <Route path="/vendor/orders" element={
             <ProtectedRoute role="vendor">
               <VendorOrders />
@@ -65,7 +72,7 @@ function App() {
               <CreateShop />
             </ProtectedRoute>
           } />
-          
+
           {/* Update Shop */}
           <Route path="/vendor/update-shop" element={
             <ProtectedRoute role="vendor">

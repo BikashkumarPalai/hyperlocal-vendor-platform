@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -22,6 +23,7 @@ const VendorOrders = () => {
       setOrders(res.data.orders)
     } catch (err) {
       console.error(err)
+      toast.error('Failed to load orders')
     } finally {
       setLoading(false)
     }
@@ -32,9 +34,16 @@ const VendorOrders = () => {
       await axios.put(`/api/order/status/${orderId}`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       })
+      const messages = {
+        accepted: 'Order accepted',
+        rejected: 'Order rejected',
+        completed: 'Order marked as completed'
+      }
+      toast.success(messages[status])
       fetchOrders()
     } catch (err) {
       console.error(err)
+      toast.error('Failed to update order status')
     }
   }
 
@@ -54,6 +63,7 @@ const VendorOrders = () => {
 
   const handleLogout = () => {
     logout()
+    toast.success('Logged out successfully')
     navigate('/login')
   }
 
@@ -87,11 +97,10 @@ const VendorOrders = () => {
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-4 py-1 rounded-full text-sm font-medium capitalize transition ${
-                filter === tab
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`px-4 py-1 rounded-full text-sm font-medium capitalize transition ${filter === tab
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-100'
+                }`}
             >
               {tab}
             </button>

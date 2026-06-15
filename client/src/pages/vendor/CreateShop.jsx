@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 // import { address } from 'framer-motion/client'
@@ -15,7 +16,6 @@ const CreateShop = () => {
     contact: '',
     address: ''
   })
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [locating, setLocating] = useState(false)
   const [image, setImage] = useState(null)
@@ -35,7 +35,7 @@ const CreateShop = () => {
         setLocating(false)
       },
       (error) => {
-        alert('Could not get location. Please allow location access.')
+        toast.error('Could not get location. Please allow location access.')
         setLocating(false)
       }
     )
@@ -48,7 +48,6 @@ const CreateShop = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
     try {
       const data = new FormData()
       Object.entries(formData).forEach(([key, val]) => data.append(key, val))
@@ -60,9 +59,10 @@ const CreateShop = () => {
           'Content-Type': 'multipart/form-data'
         }
       })
+      toast.success('Shop created successfully!')
       navigate('/vendor/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -75,12 +75,6 @@ const CreateShop = () => {
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
           Create Your Shop
         </h2>
-
-        {error && (
-          <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

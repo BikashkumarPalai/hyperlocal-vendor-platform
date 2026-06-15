@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -71,13 +72,16 @@ const ReviewModal = ({ order, onClose, onSuccess }) => {
             await axios.post('/api/review/submit', payload, {
                 headers: { Authorization: `Bearer ${token}` }
             })
+            toast.success('Review submitted successfully!')
             setStep('done')
             setTimeout(() => {
                 onSuccess()
                 onClose()
             }, 1500)
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong.')
+            const message = err.response?.data?.message || 'Something went wrong.'
+            setError(message)
+            toast.error(message)
         } finally {
             setLoading(false)
         }

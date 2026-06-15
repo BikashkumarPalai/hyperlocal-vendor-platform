@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -16,8 +17,6 @@ const UpdateShop = () => {
     const [image, setImage] = useState(null)
     const [loading, setLoading] = useState(false)
     const [fetching, setFetching] = useState(true)
-    const [error, setError] = useState('')
-    const [success, setSuccess] = useState('')
 
     const headers = { Authorization: `Bearer ${token}` }
 
@@ -35,7 +34,7 @@ const UpdateShop = () => {
                 })
                 setCurrentImage(shop.image || '')
             } catch (err) {
-                setError('Failed to load shop data')
+                toast.error('Failed to load shop data')
             } finally {
                 setFetching(false)
             }
@@ -63,10 +62,10 @@ const UpdateShop = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             })
-            setSuccess('Shop updated successfully!')
-            // setTimeout(() => navigate('/vendor/dashboard'), 1500)
+            toast.success('Shop updated successfully!')
+            setTimeout(() => navigate('/vendor/dashboard'), 1500)
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong')
+            toast.error(err.response?.data?.message || 'Something went wrong')
         } finally {
             setLoading(false)
         }
@@ -158,12 +157,11 @@ const UpdateShop = () => {
                         </label>
                         <button
                             type="button"
-                            onClick={() => setFormData({...formData, isOpen: !formData.isOpen})}
-                            className={`px-6 py-2 rounded-full text-sm font-medium transition ${
-                                formData.isOpen
-                                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                    : 'bg-red-100 text-red-600 hover:bg-red-200'
-                            }`}
+                            onClick={() => setFormData({ ...formData, isOpen: !formData.isOpen })}
+                            className={`px-6 py-2 rounded-full text-sm font-medium transition ${formData.isOpen
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-red-100 text-red-600 hover:bg-red-200'
+                                }`}
                         >
                             {formData.isOpen ? '● Open' : '● Closed'}
                         </button>

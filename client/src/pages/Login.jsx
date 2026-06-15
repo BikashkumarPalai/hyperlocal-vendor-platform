@@ -1,19 +1,30 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../api/axios'
 
 import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  // This is the key for calling login function in useAuth and set the userdata and Token 
-  const { login } = useAuth()
+  const { login,user } = useAuth()   // This is the key for calling login function in useAuth and set the userdata and Token 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // If already logged in, redirect away from login page
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'vendor') {
+        navigate('/vendor/dashboard')
+      } else {
+        navigate('/customer/marketplace')
+      }
+    }
+  }, [user])
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -26,13 +37,14 @@ const Login = () => {
     try {
       const res = await axios.post('/api/auth/login', formData)
       login(res.data.user, res.data.token)
+      toast.success('Login successful')
       if (res.data.user.role === 'vendor') {
         navigate('/vendor/dashboard')
       } else {
         navigate('/marketplace')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -74,7 +86,7 @@ const Login = () => {
             <input
               type="password"
               name="password"
-              autoComplete="current-password" 
+              autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
               required

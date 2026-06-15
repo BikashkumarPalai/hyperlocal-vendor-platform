@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../api/axios'
 
 const Signup = () => {
@@ -10,7 +11,6 @@ const Signup = () => {
     password: '',
     role: 'customer'
   })
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
@@ -20,12 +20,12 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
     try {
       await axios.post('/api/auth/signup', formData)
+      toast.success('Account created successfully')
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -38,12 +38,6 @@ const Signup = () => {
           Create Account
         </h2>
 
-        {error && (
-          <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -52,7 +46,7 @@ const Signup = () => {
             <input
               type="text"
               name="name"
-              autoComplete="current-password" 
+              autoComplete="current-password"
               value={formData.name}
               onChange={handleChange}
               required

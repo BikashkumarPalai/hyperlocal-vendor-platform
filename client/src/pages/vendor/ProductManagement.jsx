@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 
@@ -6,8 +7,6 @@ const ProductManagement = () => {
   const { token } = useAuth()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [image, setImage] = useState(null)
   const fileInputRef = useRef(null)
@@ -31,7 +30,7 @@ const ProductManagement = () => {
       const res = await axios.get('/api/product/my-products', { headers })
       setProducts(res.data.products)
     } catch (err) {
-      setError('Failed to load products')
+      toast.error('Failed to load products')
     }
   }
 
@@ -83,10 +82,10 @@ const ProductManagement = () => {
 
       if (editingId) {
         await axios.put(`/api/product/update/${editingId}`, data, config)
-        setSuccess('Product updated successfully')
+        toast.success('Product updated successfully')
       } else {
         await axios.post('/api/product/add', data, config)
-        setSuccess('Product added successfully')
+        toast.success('Product added successfully')
       }
 
       setFormData({ name: '', price: '', unit: '', stock: '', description: '' })
@@ -95,7 +94,7 @@ const ProductManagement = () => {
       setEditingId(null)
       fetchProducts()
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -116,10 +115,10 @@ const ProductManagement = () => {
     if (!window.confirm('Delete this product?')) return
     try {
       await axios.delete(`/api/product/delete/${id}`, { headers })
-      setSuccess('Product deleted')
+      toast.success('Product deleted successfully')
       fetchProducts()
     } catch (err) {
-      setError('Failed to delete product')
+      toast.error('Failed to delete product')
     }
   }
 

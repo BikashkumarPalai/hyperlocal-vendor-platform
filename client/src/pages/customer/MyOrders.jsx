@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import ReviewModal from './Reviewmodal'
@@ -23,6 +24,7 @@ const MyOrders = () => {
       setOrders(res.data.orders)
     } catch (err) {
       console.error(err)
+      toast.error('Failed to load orders')
     } finally {
       setLoading(false)
     }
@@ -40,6 +42,7 @@ const MyOrders = () => {
 
   const handleLogout = () => {
     logout()
+    toast.success('Logged out successfully')
     navigate('/login')
   }
 
@@ -154,6 +157,7 @@ const MyOrders = () => {
           onSuccess={() => {
             handleReviewSuccess(reviewingOrder._id)
             setReviewingOrder(null)
+            toast.success('Review submitted successfully')
           }}
         />
       )}

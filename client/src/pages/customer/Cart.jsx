@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
-import axios from '../../api/axios'
+import { toast } from 'react-toastify'
 import { useState } from 'react'
+import axios from '../../api/axios'
 
 const Cart = () => {
   const navigate = useNavigate()
@@ -17,11 +18,9 @@ const Cart = () => {
     totalPrice
   } = useCart()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   const handlePlaceOrder = async () => {
     setLoading(true)
-    setError('')
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -67,11 +66,14 @@ const Cart = () => {
                   headers: { Authorization: `Bearer ${token}` }
                 })
 
+                toast.success('Order placed successfully!')
                 clearCart()
                 navigate('/customer/orders')
 
               } catch (err) {
-                setError(err.response?.data?.message || 'Order saving failed')
+                toast.error(
+                  err.response?.data?.message || 'Order saving failed'
+                )
               }
             },
             prefill: {
@@ -82,7 +84,7 @@ const Cart = () => {
             modal: {
               ondismiss: () => {
                 setLoading(false)
-                setError('Payment cancelled')
+                toast.info('Payment cancelled')
               }
             }
           }
@@ -91,13 +93,15 @@ const Cart = () => {
           razorpayInstance.open()
 
         } catch (err) {
-          setError(err.response?.data?.message || 'Failed to initiate payment')
+          toast.error(
+            err.response?.data?.message || 'Failed to initiate payment'
+          )
         } finally {
           setLoading(false)
         }
       },
       () => {
-        setError('Location access required to place order.')
+        toast.error('Location access required to place order.')
         setLoading(false)
       }
     )
