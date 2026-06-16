@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { login,user } = useAuth()   // This is the key for calling login function in useAuth and set the userdata and Token 
+  const { login, user } = useAuth()   // This is the key for calling login function in useAuth and set the userdata and Token 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -19,9 +19,9 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (user.role === 'vendor') {
-        navigate('/vendor/dashboard')
+        navigate('/dashboard')
       } else {
-        navigate('/customer/marketplace')
+        navigate('/marketplace')
       }
     }
   }, [user])
