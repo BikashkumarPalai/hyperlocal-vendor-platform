@@ -1310,6 +1310,16 @@ export default function Marketplace() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: "'Inter', sans-serif" }}>
+      {/* <style>{`
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        `}
+      </style> */}
       {/* ── Navbar ── */}
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="nav-inner">
