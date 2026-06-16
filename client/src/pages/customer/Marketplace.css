@@ -37,8 +37,7 @@
         .trust-row { display: flex; gap: 20px; flex-wrap: wrap; }
         .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #374151; }
         .trust-icon-circle { width: 32px; height: 32px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); flex-shrink: 0; }
-        .hero-right { display: flex; justify-content: center; align-items: center; min-height: 420px; }
-        .hero-right img { width: 100%; max-width: 600px; height: auto; object-fit: contain; filter: drop-shadow(0 20px 48px rgba(34,197,94,0.14)); mix-blend-mode: multiply; }
+        
 
         /* ── Main ── */
         .main { max-width: 1200px; margin: 0 auto; padding: 56px 24px 0; }
@@ -68,21 +67,6 @@
         .pcard-price { font-size: 15px; font-weight: 800; color: #22c55e; }
         .pcard-unit { font-size: 12px; font-weight: 500; color: #94a3b8; }
         .pcard-skeleton { width: 220px; height: 270px; }
-
-        /* ── Category Cards ── */
-        .cat-section { margin-bottom: 56px; }
-        .cat-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; margin-top: 20px; }
-        .cat-card { display: flex; flex-direction: column; align-items: center; gap: 0; border-radius: 20px; border: 2px solid transparent; cursor: pointer; transition: all 0.22s; background: #fff; overflow: hidden; }
-        .cat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); }
-        .cat-card.active { border-color: currentColor; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-        .cat-img-wrap { width: 100%; height: 80px; overflow: hidden; }
-        .cat-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .cat-card:hover .cat-img { transform: scale(1.08); }
-        .cat-label-wrap { padding: 10px 8px; text-align: center; width: 100%; }
-        .cat-label { font-size: 12px; font-weight: 700; color: #374151; }
-        .cat-card.active .cat-label { font-weight: 800; }
-        /* All category uses icon not image */
-        .cat-icon-only { width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
 
         /* ── Shop Cards ── */
         .shops-section { margin-bottom: 56px; }

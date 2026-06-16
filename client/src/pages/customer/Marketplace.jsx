@@ -1021,7 +1021,6 @@ import { useNavigate } from 'react-router-dom'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
-import Hero from '../../assets/Hero.jpeg'
 import {
   BadgeCheck, ShieldCheck,
   ShoppingCart, UtensilsCrossed, Apple, Croissant, Milk, PenLine, LayoutGrid, Package,
@@ -1373,9 +1372,6 @@ export default function Marketplace() {
               ))}
             </div>
           </div>
-          <div className="hero-right">
-            <img src={Hero} alt="Local marketplace" />
-          </div>
         </div>
       </section>
 
@@ -1414,40 +1410,6 @@ export default function Marketplace() {
           />
         )}
 
-        {/* ── Section 3: Categories ── */}
-        <div className="cat-section">
-          <div className="section-title">Shop by Category</div>
-          <div className="section-sub">What are you looking for today?</div>
-          <div className="cat-grid">
-            {CATEGORIES.map(cat => (
-              <div
-                key={cat.id}
-                className={`cat-card${category === cat.id ? ' active' : ''}`}
-                style={{ color: cat.color, borderColor: category === cat.id ? cat.color : 'transparent' }}
-                onClick={() => setCategory(cat.id)}
-              >
-                {cat.id === ''
-                  ? (
-                    <div className="cat-icon-only" style={{ background: category === '' ? cat.color : cat.bg }}>
-                      {/* clone icon with correct color */}
-                      <LayoutGrid size={28} color={category === '' ? '#fff' : cat.color} />
-                    </div>
-                  )
-                  : (
-                    <div className="cat-img-wrap">
-                      <img src={CAT_IMAGES[cat.id]} alt={cat.label} className="cat-img" />
-                    </div>
-                  )
-                }
-                <div className="cat-label-wrap">
-                  <span className="cat-label" style={{ color: category === cat.id ? cat.color : '#374151' }}>
-                    {cat.label}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* ── Section 4: Explore Nearby Shops ── */}
         <div className="shops-section" id="shops-section">
