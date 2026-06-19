@@ -367,17 +367,6 @@ const userIcon = new L.Icon({
 const catColor = { grocery: '#16a34a', food: '#ea580c', fruit: '#dc2626', bakery: '#d97706', dairy: '#2563eb', stationary: '#7c3aed', other: '#64748b' }
 const catBg = { grocery: '#f0fdf4', food: '#fff7ed', fruit: '#fef2f2', bakery: '#fffbeb', dairy: '#eff6ff', stationary: '#f5f3ff', other: '#f8fafc' }
 
-// Category images from Unsplash (free, no auth needed)
-const CAT_IMAGES = {
-  grocery: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&q=80',
-  food: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80',
-  fruit: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=300&q=80',
-  bakery: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80',
-  dairy: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&q=80',
-  stationary: 'https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=300&q=80',
-  other: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&q=80',
-}
-
 const CATEGORIES = [
   { id: '', label: 'All', color: '#0f172a', bg: '#f1f5f9', icon: <LayoutGrid size={20} /> },
   { id: 'grocery', label: 'Grocery', color: '#16a34a', bg: '#f0fdf4', icon: <ShoppingCart size={20} /> },
@@ -937,6 +926,17 @@ export default function Marketplace() {
                         <div className="shop-name">
                           {shop.name}
                         </div>
+
+                        {shop.totalRatings > 0 && (
+                          <div className="shop-rating-badge">
+                            <Star
+                              size={12}
+                              fill="#f59e0b"
+                              color="#f59e0b"
+                            />
+                            {shop.averageRating?.toFixed(1)}
+                          </div>
+                        )}
 
                         <BadgeCheck
                           size={15}

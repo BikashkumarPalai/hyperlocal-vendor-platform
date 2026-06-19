@@ -4,6 +4,10 @@ import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useAuth } from '../../context/AuthContext'
 import ReviewModal from './Reviewmodal'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+
+
 
 const MyOrders = () => {
   const { user, token, logout } = useAuth()
@@ -40,11 +44,6 @@ const MyOrders = () => {
     }
   }
 
-  const handleLogout = () => {
-    logout()
-    toast.success('Logged out successfully')
-    navigate('/login')
-  }
 
   // After successful review submission — flip isReviewed in local state
   // so the button changes to "Reviewed ✓" without refetching all orders
@@ -54,20 +53,25 @@ const MyOrders = () => {
     )
   }
 
+
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-blue-600">Hyperlocal Vendor</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">Hello, {user?.name}</span>
-          <button
-            onClick={handleLogout}
-            className="bg-red-100 text-red-600 px-4 py-1 rounded text-sm hover:bg-red-200 transition"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+      {/* ── Navbar ── */}
+      <Navbar
+        scrolled={scrolled}
+      />
 
       <div className="max-w-3xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
@@ -161,6 +165,7 @@ const MyOrders = () => {
           }}
         />
       )}
+      <Footer />
     </div>
   )
 }

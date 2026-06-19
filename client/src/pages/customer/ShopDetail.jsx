@@ -5,6 +5,10 @@ import axios from '../../api/axios'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { getDistanceInKm } from '../../lib/distance'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+
+
 
 const ShopDetail = () => {
   const { id } = useParams()
@@ -20,6 +24,17 @@ const ShopDetail = () => {
   useEffect(() => {
     fetchShopData()
   }, [id])
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
 
 
@@ -93,19 +108,13 @@ const ShopDetail = () => {
   return (
     <div className="min-h-screen bg-gray-100">
 
-      {/* Navbar */}
-      
+      {/* ── Navbar ── */}
+      <Navbar
+        scrolled={scrolled}
+      />
+
 
       <div className="max-w-4xl mx-auto p-6">
-
-        {/* Back button */}
-        <button
-          onClick={() => navigate('/marketplace')}
-          className="text-blue-600 text-sm mb-4 hover:underline"
-        >
-          Back to Marketplace
-        </button>
-
         {/* Shop Info */}
         {shop && (
           <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -219,6 +228,7 @@ const ShopDetail = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   )
 }

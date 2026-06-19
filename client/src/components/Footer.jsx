@@ -226,7 +226,7 @@ const Footer = () => {
             <div className="hl-col-title">Shop by category</div>
             <div className="hl-link-list">
               {CATEGORY_LINKS.map(cat => (
-                <Link key={cat.value} to={`/marketplace?category=${cat.value}`} className="hl-link">
+                <Link key={cat.value} to="/marketplace" className="hl-link">
                   <span className="dot" style={{ background: '#22c55e' }} />
                   {cat.label}
                 </Link>
@@ -270,7 +270,7 @@ const Footer = () => {
             </div>
             <div className="hl-contact-item">
               <div className="hl-contact-icon"><Phone size={13} color="#22c55e" /></div>
-              <span>+91 90000 00000</span>
+              <span>+91 8917359201</span>
             </div>
 
             <Link to="/vendor/create-shop" className="hl-vendor-cta">

@@ -4,6 +4,10 @@ import { toast } from 'react-toastify'
 import axios from '../../api/axios'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+
+
 
 const ProductDetail = () => {
   const { id } = useParams()
@@ -19,6 +23,19 @@ const ProductDetail = () => {
     fetchProduct()
   }, [id])
 
+
+
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   const fetchProduct = async () => {
     try {
       setLoading(true)
@@ -85,18 +102,12 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-gray-50">
 
       {/* ── Navbar ── */}
-      
+      <Navbar
+        scrolled={scrolled}
+      />
+
 
       <div className="max-w-2xl mx-auto px-4 py-6">
-
-        {/* ── Back ── */}
-        <button
-          onClick={() => navigate(-1)}
-          className="text-sm text-gray-500 hover:text-gray-700 mb-5 flex items-center gap-1"
-        >
-          ← Back
-        </button>
-
         {/* ── Product Image ── */}
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-4">
           {product.image ? (
@@ -224,6 +235,7 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
+      <Footer />
 
     </div>
   )

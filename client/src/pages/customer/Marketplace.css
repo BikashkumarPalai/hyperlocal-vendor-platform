@@ -1124,7 +1124,22 @@
 }
 
 
-        
+        .shop-rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background: #fffbeb;
+
+  color: #92400e;
+
+  font-size: 11px;
+  font-weight: 700;
+}
         /* ── Map ── */
         .map-section { background: #fff; border-top: 1px solid #f1f5f9; }
         .map-header { max-width: 1200px; margin: 0 auto; padding: 40px 24px 24px; display: flex; justify-content: space-between; align-items: flex-end; }

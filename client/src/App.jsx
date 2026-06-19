@@ -12,12 +12,14 @@ import MyOrders from './pages/customer/MyOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import Cart from './pages/customer/Cart';
 import UpdateShop from './pages/vendor/UpdateShop';
-import ProductDetail from './pages/customer/Productdetail'
+import ProductDetail from './pages/customer/Productdetail';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+      <ScrollToTop />
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
