@@ -577,18 +577,30 @@ export default function Marketplace() {
   }, [])
 
   useEffect(() => { getUserLocation() }, [])
-  useEffect(() => { fetchShops() }, [userLocation])
-  useEffect(() => { fetchProducts() }, [userLocation])
+  // useEffect(() => { fetchShops() }, [userLocation])
+  // useEffect(() => { fetchProducts() }, [userLocation])
+  useEffect(() => {
+    fetchShops()
+    fetchProducts()
+  }, [userLocation])
+
 
   useEffect(() => {
     document.body.style.overflow = mapExpanded ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mapExpanded])
 
+  // const getUserLocation = () => {
+  //   navigator.geolocation.getCurrentPosition(
+  //     pos => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+  //     () => { fetchShops(); fetchProducts() }
+  //   )
+  // }
+
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition(
-      pos => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-      () => { fetchShops(); fetchProducts() }
+      (pos) => setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+      (_geoErr) => { fetchShops(); fetchProducts() }
     )
   }
 

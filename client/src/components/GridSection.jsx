@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function GridSection({
   title,
   subtitle,
-  items,
+  items=[],
   loading,
   renderItem,
   initialCount = 8
