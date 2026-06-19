@@ -49,8 +49,6 @@ const UpdateShop = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
-        setError('')
-        setSuccess('')
         try {
             const data = new FormData()
             Object.entries(formData).forEach(([key, val]) => data.append(key, val))
@@ -94,17 +92,6 @@ const UpdateShop = () => {
                         Update Shop
                     </h2>
                 </div>
-
-                {error && (
-                    <div className="bg-red-100 text-red-600 p-3 rounded mb-4 text-sm">
-                        {error}
-                    </div>
-                )}
-                {success && (
-                    <div className="bg-green-100 text-green-600 p-3 rounded mb-4 text-sm">
-                        {success}
-                    </div>
-                )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
