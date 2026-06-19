@@ -85,20 +85,7 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-gray-50">
 
       {/* ── Navbar ── */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center sticky top-0 z-10">
-        <h1 className="text-base font-bold text-gray-900">
-          Hyper<span className="text-green-600">local</span>
-        </h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">{user?.name}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-500 hover:underline"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+      
 
       <div className="max-w-2xl mx-auto px-4 py-6">
 

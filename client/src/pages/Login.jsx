@@ -19,7 +19,7 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (user.role === 'vendor') {
-        navigate('/dashboard')
+        navigate('/vendor/dashboard')
       } else {
         navigate('/marketplace')
       }

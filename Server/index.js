@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express')
 const cors = require('cors')
-const dotenv = require('dotenv')
+// const dotenv = require('dotenv')
 const connectDB = require('./lib/mongoDB')
 const authRoutes = require('./routes/auth')
 const shopRoutes = require('./routes/shop')
@@ -9,7 +10,7 @@ const orderRoutes = require('./routes/order')
 const analyticsRoutes = require('./routes/analytics')
 const reviewRoutes = require('./routes/review')
 
-dotenv.config()
+// dotenv.config()
 
 const app = express()
 
