@@ -50,9 +50,45 @@ const Login = () => {
     }
   }
 
+
+
+  const loginAsDemo = async (type) => {
+    try {
+      setLoading(true)
+
+      const credentials =
+        type === 'vendor'
+          ? {
+            email: 'sheetal@gmail.com',
+            password: 'sheetal'
+          }
+          : {
+            email: 'gudu@gmail.com',
+            password: 'gudu'
+          }
+
+      const res = await axios.post('/api/auth/login', credentials)
+
+      login(res.data.user, res.data.token)
+
+      toast.success(
+        `Logged in as ${type === 'vendor' ? 'Vendor' : 'Customer'}`
+      )
+
+      if (res.data.user.role === 'vendor') {
+        navigate('/vendor/dashboard')
+      } else {
+        navigate('/marketplace')
+      }
+    } catch (err) {
+      toast.error('Demo login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
           Welcome Back
         </h2>
@@ -74,7 +110,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
             />
           </div>
@@ -90,7 +126,7 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
             />
           </div>
@@ -98,15 +134,48 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 transition disabled:opacity-50"
+            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200"></div>
+          </div>
+
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-gray-500">
+              Continue as Guest
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => loginAsDemo('customer')}
+            disabled={loading}
+            className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700 hover:bg-green-100 transition cursor-pointer disabled:cursor-not-allowed"
+          >
+            Customer Demo
+          </button>
+
+          <button
+            onClick={() => loginAsDemo('vendor')}
+            disabled={loading}
+            className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm font-medium text-purple-700 hover:bg-purple-100 transition cursor-pointer disabled:cursor-not-allowed"
+          >
+            Vendor Demo
+          </button>
+        </div>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link
+            to="/signup"
+            className="text-blue-600 hover:underline"
+          >
             Sign Up
           </Link>
         </p>
