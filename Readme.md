@@ -39,47 +39,6 @@ A full-stack hyperlocal marketplace connecting customers with nearby local shops
 - Vendor Analytics
 - Image Uploads (Cloudinary via Multer)
 
----
-
-## Getting Started
-
-**Prerequisites:** Node.js v18+, MongoDB, Cloudinary account, Razorpay account
-
-**Backend**
-
-```bash
-cd backend
-npm install
-```
-
-Create a `.env` file:
-
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
-```
-
-```bash
-npm start
-```
-
-**Frontend**
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
 
 ## Key Business Rules
 
